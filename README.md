@@ -1,1 +1,1 @@
-#First Spring application
+#First Spring MVC project
