@@ -9,6 +9,7 @@ import ru.alexsem.springcourse.models.Person;
 
 import java.util.List;
 
+//HTTP методы и URL для паттерна REST указаны в CRUD_App1
 @Controller
 @RequestMapping("/people")
 public class PeopleController {
@@ -19,16 +20,16 @@ public class PeopleController {
         this.personDAO = personDAO;
     }
     
-    //    В методе index в @GetMapping не передаём что-либо, так
-//    как в URL будет только /people
+    // Получаем все записи с сераера(DB->DAO->Controller->View)
     @GetMapping()
     public String index(Model model) {
-//        Получим всех людей из DAO и передадим на отображение в представление
+//  Получим всех людей из DAO и передадим на отображение в представление
         List<Person> people = personDAO.index();
         model.addAttribute("people", people);
         return "people/index";
     }
     
+    //  Получаем одну запись с сервера (DB->DAO->Controller->View)
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model) {
 //        Получим одного человека из DAO и передадим на отображение в представление
@@ -37,19 +38,21 @@ public class PeopleController {
         return "people/show";
     }
     
-    //    Метод создаёт Person, добавляет объект в модель,
-    //    возвращает html-форму. Далее поля инициализируются данными из формы
-//    и передаются в метод create() по адресу POST /people
+    //  Метод возвращает с сервера html-форму для создания человека.
+//  Метод создаёт Person, добавляет объект в модель.
+//  Далее поля инициализируются данными из формы
+//  и передаются в метод create() в POST запрос /people
     @GetMapping("/new")
     public String newPerson(@ModelAttribute("person") Person person) {
 //        альтернативный вариант создания объекта Person:
 //         model.addAttribute("person", new Person);
         return "people/new";
     }
-    
-    //   Метод принимает на вход post-запрос,
-//   берёт данные из этого post-запроса
+// Метод принимает на вход post-запрос по адресу /people,
+// берёт данные из этого post-запроса
 // и добавляет нового человека в базу данных с помощью DAO
+// View->Controller->DAO->DB
+    
     @PostMapping()
 //  В модель будет положен новый объект Person со значениями полей из формы.
 //  Аннотация @ModelAttribute ДЛЯ POST-ЗАПРОСА сама создаёт объект с вставленными в
@@ -60,6 +63,35 @@ public class PeopleController {
 //  CRUD_App2.
     public String create(@ModelAttribute("person") Person person) {
         personDAO.save(person);
+        return "redirect:/people";
+    }
+    
+    //  Метод возвращает с сервера html-страницу для редактирования человека.
+//  Аннотация @PathVariable("id") позволяет извлечь id из адреса запроса
+//  и кладёт в переменную int id.
+    @GetMapping("/{id}/edit")
+    public String edit(@PathVariable("id") int id, Model model) {
+        model.addAttribute("person", personDAO.show(id));
+        return "people/edit";
+    }
+    
+    // View->Controller->DAO->DB
+//  Метод принимает Patch-запрос
+//  Аннотация @ModelAttribute создаёт объект Person
+//  с вставленными в форму полями и кладёт в переменную person.
+//  Это альтернатива @RequestParam.
+    @PatchMapping("/{id}")
+    public String update(@ModelAttribute("person") Person person,
+                         @PathVariable("id") int id) {
+        personDAO.update(id, person);
+        return "redirect:/people";
+    }
+    
+    // View->Controller->DAO->DB
+//  Метод принимает Delete-запрос
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable("id") int id) {
+        personDAO.delete(id);
         return "redirect:/people";
     }
 }
