@@ -11,7 +11,9 @@ import ru.alexsem.springcourse.models.Person;
 import javax.validation.Valid;
 import java.util.List;
 
-//HTTP методы и URL для паттерна REST указаны в CRUD_App1
+/**
+ * HTTP методы и URL для паттерна REST указаны в CRUD_App1
+ */
 @Controller
 @RequestMapping("/people")
 public class PeopleController {
@@ -22,7 +24,12 @@ public class PeopleController {
         this.personDAO = personDAO;
     }
     
-    // Получаем все записи с сераера(DB->DAO->Controller->View)
+    /**
+     * Получаем все записи с сервера(DB->DAO->Controller->View)
+     *
+     * @param model
+     * @return
+     */
     @GetMapping()
     public String index(Model model) {
 //  Получим всех людей из DAO и передадим на отображение в представление
@@ -31,7 +38,13 @@ public class PeopleController {
         return "people/index";
     }
     
-    //  Получаем одну запись с сервера (DB->DAO->Controller->View)
+    /**
+     * Получаем одну запись с сервера (DB->DAO->Controller->View)
+     *
+     * @param id
+     * @param model
+     * @return
+     */
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model) {
 //        Получим одного человека из DAO и передадим на отображение в представление
@@ -40,29 +53,42 @@ public class PeopleController {
         return "people/show";
     }
     
-    //  Метод возвращает с сервера html-форму для создания человека.
-//  Метод создаёт Person, добавляет объект в модель.
-//  Далее поля инициализируются данными из формы
-//  и передаются в метод create() в POST запрос /people
+    /**
+     * Метод возвращает с сервера html-форму (Thymeleaf) для создания человека.
+     * Метод создаёт Person, добавляет объект в модель и отправляет в Thymeleaf.
+     * Далее поля инициализируются данными из формы
+     * и передаются в метод create() в POST запрос /people
+     *
+     * @param person
+     * @return
+     */
     @GetMapping("/new")
     public String newPerson(@ModelAttribute("person") Person person) {
 //        альтернативный вариант создания объекта Person:
 //         model.addAttribute("person", new Person);
         return "people/new";
     }
-// Метод принимает на вход post-запрос по адресу /people,
-// берёт данные из этого post-запроса
-// и добавляет нового человека в базу данных с помощью DAO
-// View->Controller->DAO->DB
+    
+    /**
+     * Метод принимает на вход post-запрос по адресу /people,
+     * берёт данные из этого post-запроса
+     * и добавляет нового человека в базу данных с помощью DAO
+     * View->Controller->DAO->DB
+     *
+     * В модель будет положен новый объект Person со значениями полей из формы.
+     * Аннотация @ModelAttribute ДЛЯ POST-ЗАПРОСА сама создаёт объект с вставленными в
+     * форму полями и кладёт его в модель.
+     * Альтернативный вариант:
+     * Данные полей передаются ИЗ HTML-ФОРМЫ в теле Post-request в формате name=Имя
+     * по адресу action="/people" и далее извлекаются через @RequestParam и
+     * создаётся Person. См на салйдеCRUD_App2.
+     *
+     * @param person
+     * @param bindingResult
+     * @return
+     */
     
     @PostMapping()
-//  В модель будет положен новый объект Person со значениями полей из формы.
-//  Аннотация @ModelAttribute ДЛЯ POST-ЗАПРОСА сама создаёт объект с вставленными в
-//  форму полями и кладёт его в модель.
-//  Альтернативный вариант:
-//  Данные полей передаются в теле Post-request в формате name=Имя по адресу action="/people"
-//  и далее извлекаются через @RequestParam и создаётся Person. См на салйде
-//  CRUD_App2.
     public String create(@ModelAttribute("person") @Valid Person person,
                          BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -72,20 +98,34 @@ public class PeopleController {
         return "redirect:/people";
     }
     
-    //  Метод возвращает с сервера html-страницу для редактирования человека.
-//  Аннотация @PathVariable("id") позволяет извлечь id из адреса запроса
-//  и кладёт в переменную int id.
+    /**
+     * Метод возвращает с сервера html-страницу для редактирования человека.
+     * Аннотация @PathVariable("id") позволяет извлечь id из адреса запроса
+     * и кладёт в переменную int id. Далее мы внедряем в модель объект класса
+     * Person  с уже имеющимися полями.
+     *
+     * @param id
+     * @param model
+     * @return
+     */
     @GetMapping("/{id}/edit")
     public String edit(@PathVariable("id") int id, Model model) {
         model.addAttribute("person", personDAO.show(id));
         return "people/edit";
     }
     
-    // View->Controller->DAO->DB
-//  Метод принимает Patch-запрос
-//  Аннотация @ModelAttribute создаёт объект Person
-//  с вставленными в форму полями и кладёт в переменную person.
-//  Это альтернатива @RequestParam.
+    /**
+     * View->Controller->DAO->DB
+     * Метод принимает Patch-запрос
+     * Аннотация @ModelAttribute создаёт объект Person
+     * с вставленными в форму полями и кладёт в переменную person.
+     * Это альтернатива @RequestParam (см на салйдеCRUD_App2).
+     *
+     * @param person
+     * @param bindingResult
+     * @param id
+     * @return
+     */
     @PatchMapping("/{id}")
     public String update(@ModelAttribute("person") @Valid Person person,
                          BindingResult bindingResult, @PathVariable("id") int id) {
@@ -96,8 +136,13 @@ public class PeopleController {
         return "redirect:/people";
     }
     
-    // View->Controller->DAO->DB
-//  Метод принимает Delete-запрос
+    /**
+     * View->Controller->DAO->DB
+     * Метод принимает Delete-запрос
+     *
+     * @param id
+     * @return
+     */
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") int id) {
         personDAO.delete(id);
