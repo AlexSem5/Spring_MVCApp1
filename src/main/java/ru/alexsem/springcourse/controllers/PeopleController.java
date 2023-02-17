@@ -3,10 +3,12 @@ package ru.alexsem.springcourse.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.alexsem.springcourse.dao.PersonDAO;
 import ru.alexsem.springcourse.models.Person;
 
+import javax.validation.Valid;
 import java.util.List;
 
 //HTTP методы и URL для паттерна REST указаны в CRUD_App1
@@ -61,7 +63,11 @@ public class PeopleController {
 //  Данные полей передаются в теле Post-request в формате name=Имя по адресу action="/people"
 //  и далее извлекаются через @RequestParam и создаётся Person. См на салйде
 //  CRUD_App2.
-    public String create(@ModelAttribute("person") Person person) {
+    public String create(@ModelAttribute("person") @Valid Person person,
+                         BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "people/new";
+        }
         personDAO.save(person);
         return "redirect:/people";
     }
@@ -81,8 +87,11 @@ public class PeopleController {
 //  с вставленными в форму полями и кладёт в переменную person.
 //  Это альтернатива @RequestParam.
     @PatchMapping("/{id}")
-    public String update(@ModelAttribute("person") Person person,
-                         @PathVariable("id") int id) {
+    public String update(@ModelAttribute("person") @Valid Person person,
+                         BindingResult bindingResult, @PathVariable("id") int id) {
+        if (bindingResult.hasErrors()) {
+            return "people/edit";
+        }
         personDAO.update(id, person);
         return "redirect:/people";
     }
