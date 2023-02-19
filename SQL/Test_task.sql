@@ -2,7 +2,8 @@ CREATE TABLE company
 (
     id   INTEGER NOT NULL,
     name CHARACTER VARYING,
-    CONSTRAINT company_pkey PRIMARY KEY (id)
+    CONSTRAINT company_pkey
+        PRIMARY KEY (id)
 );
 
 CREATE TABLE person
@@ -12,7 +13,8 @@ CREATE TABLE person
     company_id INTEGER,
     FOREIGN KEY (company_id)
         REFERENCES company (id),
-    CONSTRAINT person_pkey PRIMARY KEY (id)
+    CONSTRAINT person_pkey
+        PRIMARY KEY (id)
 );
 
 INSERT INTO company (id, name)
