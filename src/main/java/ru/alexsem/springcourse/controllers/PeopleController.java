@@ -9,6 +9,7 @@ import ru.alexsem.springcourse.dao.PersonDAO;
 import ru.alexsem.springcourse.models.Person;
 
 import javax.validation.Valid;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -31,7 +32,7 @@ public class PeopleController {
      * @return
      */
     @GetMapping()
-    public String index(Model model) {
+    public String index(Model model) throws SQLException {
 //  Получим всех людей из DAO и передадим на отображение в представление
         List<Person> people = personDAO.index();
         model.addAttribute("people", people);
@@ -46,7 +47,7 @@ public class PeopleController {
      * @return
      */
     @GetMapping("/{id}")
-    public String show(@PathVariable("id") int id, Model model) {
+    public String show(@PathVariable("id") int id, Model model) throws SQLException {
 //        Получим одного человека из DAO и передадим на отображение в представление
         Person person = personDAO.show(id);
         model.addAttribute("person", person);
@@ -74,7 +75,7 @@ public class PeopleController {
      * берёт данные из этого post-запроса
      * и добавляет нового человека в базу данных с помощью DAO
      * View->Controller->DAO->DB
-     *
+     * <p>
      * В модель будет положен новый объект Person со значениями полей из формы.
      * Аннотация @ModelAttribute ДЛЯ POST-ЗАПРОСА сама создаёт объект с вставленными в
      * форму полями и кладёт его в модель.
@@ -90,7 +91,7 @@ public class PeopleController {
     
     @PostMapping()
     public String create(@ModelAttribute("person") @Valid Person person,
-                         BindingResult bindingResult) {
+                         BindingResult bindingResult) throws SQLException {
         if (bindingResult.hasErrors()) {
             return "people/new";
         }
@@ -109,7 +110,7 @@ public class PeopleController {
      * @return
      */
     @GetMapping("/{id}/edit")
-    public String edit(@PathVariable("id") int id, Model model) {
+    public String edit(@PathVariable("id") int id, Model model) throws SQLException {
         model.addAttribute("person", personDAO.show(id));
         return "people/edit";
     }
@@ -128,7 +129,7 @@ public class PeopleController {
      */
     @PatchMapping("/{id}")
     public String update(@ModelAttribute("person") @Valid Person person,
-                         BindingResult bindingResult, @PathVariable("id") int id) {
+                         BindingResult bindingResult, @PathVariable("id") int id) throws SQLException {
         if (bindingResult.hasErrors()) {
             return "people/edit";
         }
@@ -144,7 +145,7 @@ public class PeopleController {
      * @return
      */
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable("id") int id) {
+    public String delete(@PathVariable("id") int id) throws SQLException {
         personDAO.delete(id);
         return "redirect:/people";
     }
