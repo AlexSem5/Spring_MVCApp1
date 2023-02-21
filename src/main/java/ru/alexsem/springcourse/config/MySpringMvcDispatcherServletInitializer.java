@@ -13,11 +13,22 @@ public class MySpringMvcDispatcherServletInitializer extends AbstractAnnotationC
         return null;
     }
     
+    /**
+     * Указываем, где находится Spring-конфигурация
+     * @return
+     */
+    
     @Override
     protected Class<?>[] getServletConfigClasses() {
         return new Class[] {SpringConfig.class};
     }
     
+    /**
+     * Все http-запросы от пользователя отправляем
+     * в DispatcherServlet ("/")
+     *
+     * @return
+     */
     @Override
     protected String[] getServletMappings() {
         return new String[] {"/"};
