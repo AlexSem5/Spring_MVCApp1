@@ -4,4 +4,11 @@ CREATE TABLE person
     name  VARCHAR NOT NULL,
     age   INT CHECK ( age > 0 ),
     email VARCHAR UNIQUE
-)
+);
+
+TRUNCATE TABLE person
+    RESTART IDENTITY;
+
+ALTER TABLE person ADD COLUMN address varchar NOT NULL;
+SELECT *
+FROM person;
