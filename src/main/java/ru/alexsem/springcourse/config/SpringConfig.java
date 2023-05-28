@@ -69,6 +69,7 @@ public class SpringConfig implements WebMvcConfigurer {
     
     @Bean
     public JdbcTemplate jdbcTemplate() {
+//        takes the bean dataSource
         return new JdbcTemplate(dataSource());
     }
 }

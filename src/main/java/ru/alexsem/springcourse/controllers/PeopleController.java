@@ -87,6 +87,10 @@ public class PeopleController {
      * по адресу action="/people" и далее извлекаются через @RequestParam и
      * создаётся Person. См на салйдеCRUD_App2.
      *
+     *@Valid - валидация значений полей модели с формы. Проверяет данные, которые
+     * приходят с формы на соответствие условиям (аннотациям) в классе Person.
+     * Если появляется ошибка, то её кладём в bindingResult.
+     *
      * @param person
      * @param bindingResult
      * @return
@@ -125,6 +129,13 @@ public class PeopleController {
      * Аннотация @ModelAttribute создаёт объект Person
      * с вставленными в форму полями и кладёт в переменную person.
      * Это альтернатива @RequestParam (см на салйдеCRUD_App2).
+     *
+     * @Valid - валидация значений полей модели с формы. Проверяет данные, которые
+     * приходят с формы на соответствие условиям (аннотациям) в классе Person.
+     * Если появляется ошибка, то её кладём в bindingResult.
+     *
+     *(Проверку осуществляет Hibernate Validator)
+     *
      *
      * @param person
      * @param bindingResult
